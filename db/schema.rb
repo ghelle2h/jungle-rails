@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20211115021612) do
+ActiveRecord::Schema.define(version: 20160625062916) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,15 +56,28 @@ ActiveRecord::Schema.define(version: 20211115021612) do
 
   add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
 
-  create_table "users", force: :cascade do |t|
-    t.string   "name"
-    t.string   "email"
-    t.string   "password_digest"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+  create_table "quiz_questions", force: :cascade do |t|
+    t.integer "quiz_id"
+    t.string  "question", limit: 255
+    t.integer "answer",   limit: 2
+    t.boolean "correct"
+  end
+
+  create_table "quiz_results", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "quiz_id"
+    t.integer "result",  limit: 2
+  end
+
+  create_table "quizzes", force: :cascade do |t|
+    t.integer "user_id"
+    t.string  "title",     limit: 255,                 null: false
+    t.boolean "isprivate",             default: false, null: false
   end
 
   add_foreign_key "line_items", "orders"
   add_foreign_key "line_items", "products"
   add_foreign_key "products", "categories"
+  add_foreign_key "quiz_questions", "quizzes", name: "quiz_questions_quiz_id_fkey", on_delete: :cascade
+  add_foreign_key "quiz_results", "quizzes", name: "quiz_results_quiz_id_fkey", on_delete: :cascade
 end
